@@ -1,0 +1,300 @@
+#non recursive
+
+n=int(input("Enter the number of terms: "))
+t1=0 
+t2=1
+print("fibonacci series")
+print("0 1 ",end=" ")
+for i in range(2,n):
+  next_term=t1+t2
+  t1=t2
+  t2=next_term
+  print(next_term ,end=" ")  
+#recursive
+
+def fibo(n):
+  if n<=1:
+    return n 
+  else:
+    return( fibo(n-1) + fibo(n-2))
+
+num_terms=int(input("Enter the number of terms: "))
+if num_terms<=0:
+  print("Please enter a positive number")
+else:
+  print("fibonacci series")
+  for i in range(num_terms):
+    print(fibo(i) ,end=" ")    
+
+
+
+2
+# Huffman Coding in python
+
+string = 'BCAADDDCCACACAC'
+
+class NodeTree(object):
+
+    def __init__(self, left=None, right=None):
+        self.left = left
+        self.right = right
+
+    def children(self):
+        return (self.left, self.right)
+
+    def nodes(self):
+        return (self.left, self.right)
+
+    def __str__(self):
+        return (self.left, self.right)
+
+
+def huffman_code_tree(node, left=True, binary=''):
+    if type(node) is str:   
+        return {node: binary}
+    (l, r) = node.children()  
+    d = dict()
+    d.update(huffman_code_tree(l, True, binary + '0')) 
+    d.update(huffman_code_tree(r, False, binary + '1'))
+
+    return d
+
+
+freq = {}              
+for c in string:        
+    if c in freq:
+        freq[c] += 1    
+    else:
+        freq[c] = 1    
+
+freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)    
+
+nodes = freq
+
+while len(nodes) > 1: 
+    (key1, c1) = nodes[-1]  
+    (key2, c2) = nodes[-2] 
+    nodes = nodes[:-2]  
+    new_node = NodeTree(key1, key2) 
+    nodes.append((new_node, c1 + c2))  
+
+    nodes = sorted(nodes, key=lambda x: x[1], reverse=True) 
+
+huffmanCode = huffman_code_tree(nodes[0][0]) 
+
+
+for (char, frequency) in freq:
+    print(char," : ", huffmanCode[char])
+
+
+3
+# Structure for an item which stores weight and
+# corresponding value of Item
+class Item:
+    def __init__(self, value, weight):
+        self.value = value
+        self.weight = weight
+
+# Main greedy function to solve problem
+def fractionalKnapsack(W, arr):
+
+    # Sorting Item on basis of ratio
+    arr.sort(key=lambda x: (x.value/x.weight), reverse=True)
+
+# Result(value in Knapsack)
+    finalvalue = 0.0
+
+# Looping through all Items
+    for item in arr:
+
+# If adding Item won't overflow,
+# add it completely
+        if item.weight <= W:
+            W -= item.weight
+            finalvalue += item.value
+
+# If we can't add current Item,
+# add fractional part of it
+        else:
+            finalvalue += item.value * W / item.weight
+            break
+    
+    # Returning final value
+    return finalvalue
+
+
+# Driver Code
+if __name__ == "__main__":
+
+    W = 50
+    arr = [Item(60, 10), Item(100, 20), Item(120, 30)]
+
+    # Function call
+    max_val = fractionalKnapsack(W, arr)
+    print(max_val)
+
+
+4
+
+#DYNAMIC PROGRAMMING
+# Returns the maximum profit that can be stored by the bag
+#capacity = capacity
+#wt = weight
+#n=no of items
+def knapSack(capacity, wt, profit, n):
+    
+  K = [[0 for x in range(capacity + 1)] for x in range(n + 1)] #matrix
+#Table in bottom up manner
+  for i in range(n + 1):#i = item
+    for capacity in range(capacity + 1):
+      if i == 0 or capacity == 0:
+        K[i][capacity] = 0
+      elif wt[i-1] <= capacity:
+        K[i][capacity] = max(profit[i-1] + K[i-1][capacity-wt[i-1]], K[i-1][capacity])
+      else:
+        K[i][capacity] = K[i-1][capacity]
+  return K[n][capacity]
+#Main
+profit = [50,100,150,200]
+wt = [8,16,32,40]
+capacity = 64
+n = len(profit)
+print(knapSack(capacity, wt, profit, n))
+
+
+5
+def is_safe(board, row, col):
+    # Check if no queens threaten each other in the same column or diagonals
+    for i in range(row):
+        if board[i] == col or \
+           board[i] - i == col - row or \
+           board[i] + i == col + row:
+            return False
+    return True
+
+def solve_n_queens(n):
+    def backtrack(row):
+        if row == n:
+            solutions.append(list(board))
+            return
+        for col in range(n):
+            if is_safe(board, row, col):
+                board[row] = col
+                backtrack(row + 1)
+
+    board = [-1] * n  # Initialize the board to all -1s
+    solutions = []
+    backtrack(0)
+    return solutions
+
+def print_solutions(solutions):
+    for solution in solutions:
+        for row in solution:
+            row_str = '.' * row + 'Q' + '.' * (len(solution) - row - 1)
+            print(row_str)
+        print()
+
+if __name__ == '__main__':
+    n = 4
+    print(f"Solutions for {n}x{n} board:")
+    solutions = solve_n_queens(n)
+    print_solutions(solutions)
+
+
+
+
+BT
+pragma solidity ^0.6;
+contract banking
+{
+mapping(address=>uint) public user_account;
+mapping(address=>bool) public user_exists;
+function create_account() public payable returns(string memory)
+{
+require(user_exists[msg.sender]==false,'Account already created');
+if(msg.value==0)
+{
+user_account[msg.sender]=0;
+user_exists[msg.sender]=true;
+return "Account created";
+}
+require(user_exists[msg.sender]==false,"Account already created");
+user_account[msg.sender]=msg.value;
+user_exists[msg.sender]=true;
+return "Account created";
+}
+function deposit() public payable returns(string memory)
+{
+require(user_exists[msg.sender]==true,"Account not created");
+require(msg.value>0,"Value for deposit is Zero");
+user_account[msg.sender]=user_account[msg.sender]+msg.value;
+return "Deposited Successfully";
+}
+function withdraw(uint amount) public payable returns(string memory)
+{
+require(user_account[msg.sender]>amount,"Insufficient Balance");
+require(user_exists[msg.sender]==true,"Account not created");
+require(amount>0,"Amount should be more than zero");
+user_account[msg.sender]=user_account[msg.sender]-amount;
+msg.sender.transfer(amount);
+return "Withdrawl Successful";
+}
+function transfer(address payable userAddress, uint amount) public returns(string memory)
+{
+require(user_account[msg.sender]>amount,"Insufficient balance in Bank account");
+require(user_exists[msg.sender]==true,"Account is not created");
+require(user_exists[userAddress]==true,"Transfer account does not exist");
+require(amount>0,"Amount should be more than zero");
+user_account[msg.sender]=user_account[msg.sender]-amount;
+user_account[userAddress]=user_account[userAddress]+amount;
+return "Transfer Successful";
+}
+function send_amt(address payable toAddress, uint256 amount) public payable returns(string memory)
+{
+require(user_account[msg.sender]>amount,"Insufficeint balance in Bank account");
+require(user_exists[msg.sender]==true,"Account is not created");
+require(amount>0,"Amount should be more than zero");
+user_account[msg.sender]=user_account[msg.sender]-amount; toAddress.transfer(amount);
+return "Transfer Success";
+}
+function user_balance() public view returns(uint)
+{
+return user_account[msg.sender];
+}
+function account_exist() public view returns(bool)
+{
+return user_exists[msg.sender];
+}
+
+
+
+pragma solidity ^0.6;
+contract Student_management
+{
+struct Student
+{
+int stud_id;
+string name;
+string department;
+}
+Student[] Students;
+function add_stud(int stud_id,string memory name, string memory department)
+public
+{
+Student memory stud = Student(stud_id,name,department);
+Students.push(stud);
+}
+function getStudent(int stud_id) public view returns(string memory, string
+memory)
+{
+for (uint i=0; i<Students.length;i++)
+{
+Student memory stud = Students[i];
+if(stud.stud_id==stud_id)
+{
+return(stud.name,stud.department);
+}
+}
+return("Not Found", "Not Found");
+}
+}
